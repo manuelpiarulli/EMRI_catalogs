@@ -13,7 +13,7 @@ print("5PN AAK trajectory")
 
 inspiral_kwargs_traj = {
     "DENSE_STEPPING": 0,  # we want a sparsely sampled trajectory
-    "max_init_len": int(1e6)# all of the trajectories will be well under len = 1000
+    "max_init_len": int(1e6)# all of the trajectories will be well under len = 1e6
 }
 
 traj_backwards = EMRIInspiral(func = trajectory_class, integrate_backwards = True) 
