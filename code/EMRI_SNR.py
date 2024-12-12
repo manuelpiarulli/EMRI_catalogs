@@ -10,7 +10,6 @@ import sys
 from tqdm import tqdm as tqdm
 from few.waveform import GenerateEMRIWaveform, Pn5AAKWaveform
 from fastlisaresponse import ResponseWrapper
-from timeout_decorator import timeout, TimeoutError
 import argparse 
 
 
@@ -18,7 +17,7 @@ parser = argparse.ArgumentParser()
 
 parser.add_argument("nmodel", type = int, help = "model number")
 parser.add_argument("t_gw", type = int, help = "Tgw", default = 10)
-parser.add_argument("delta_t", type = int, help = "sample rate in s", default = 20)
+parser.add_argument("delta_t", type = int, help = "sample rate in s", default = 5)
 parser.add_argument("T_lisa", type = float, help = "observation time in year", default = 4)
 parser.add_argument("n_start_wf", type = int, help = "start index for the parameters", default = 0)
 parser.add_argument("n_end_wf", type = int, help = "end index for the parameters", default = 0)
@@ -137,7 +136,7 @@ EMRI_TDI = ResponseWrapper(AAK_waveform_model, args.T_lisa, args.delta_t,
 def run_EMRI_TDI(true_params):
     waveform = EMRI_TDI(*true_params) 
     
-    window = cp.asarray(tukey(len(waveform[0]),0)) # Window signal, reduce leakage
+    window = cp.asarray(tukey(len(waveform[0]),0.01)) # Window signal, reduce leakage
     EMRI_AET_w_pad = [zero_pad(window*waveform[i]) for i in range(N_channels)] # zero pad for efficiency
 
     EMRI_AET_fft = xp.asarray([xp.fft.rfft(item) for item in EMRI_AET_w_pad]) # Compute waveform in frequency domain

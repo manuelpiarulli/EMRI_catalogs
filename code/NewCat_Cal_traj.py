@@ -1,4 +1,8 @@
 import numpy as np
+
+import sys
+sys.path.append('/work/LISA/piarulm/EMRI_catalogs/SNR_selection')
+
 from NewCat_Source import NewCat_Source
 from NewCat_traj import traj_back
 import multiprocessing as mp
@@ -9,6 +13,7 @@ import pandas as pd
 
 from astropy.cosmology import FlatLambdaCDM
 import astropy.units as u
+
 cosmo = FlatLambdaCDM(H0=70 * u.km / u.s / u.Mpc, Tcmb0=2.725 * u.K, Om0=0.3)
 
 parser = argparse.ArgumentParser()
@@ -73,6 +78,23 @@ for j in tqdm(range):
     
     param.loc[j, ["Y0", "e0", "p0", "Y4", "e4", "p4"]] = [Y0, e0, p0, Y4, e4, p4]
     print(Y0, e0, p0, Y4, e4, p4)
+    
+# Constants
+theta1 = 87 / 90 * np.pi / 2
+theta2 = 90 / 90 * np.pi / 2
+theta3 = 93 / 90 * np.pi / 2
+
+cos_theta1 = np.cos(theta1)
+cos_theta2 = np.cos(theta2)
+cos_theta3 = np.cos(theta3)
+
+# Update the Y0 vector based on the conditions
+param['Y0'][(param['Y0'] < cos_theta1) & (param['Y0'] > cos_theta2)] = cos_theta1
+param['Y0'][(param['Y0'] <= cos_theta2) & (param['Y0'] > cos_theta3)] = cos_theta3
+
+# Stampa la lunghezza degli elementi di Y0 che soddisfano la condizione
+print(len(param['Y0'][(param['Y0'] < cos_theta1) & (param['Y0'] > cos_theta3)]))
+
 
 param.to_hdf(f"/work/LISA/piarulm/EMRI_catalogs/New_Catalog/AAK_traj/Model{args.nmodel}/M{identifier}_traj_output.h5", key="paramout", index=False)
 print("end of run" )
