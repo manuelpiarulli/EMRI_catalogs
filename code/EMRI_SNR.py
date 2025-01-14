@@ -22,8 +22,6 @@ parser.add_argument("T_lisa", type = float, help = "observation time in year", d
 parser.add_argument("n_start_wf", type = int, help = "start index for the parameters", default = 0)
 parser.add_argument("n_end_wf", type = int, help = "end index for the parameters", default = 0)
 
-
-
 # ====================== arguments parameters ==============================
 
 args = parser.parse_args()
@@ -154,8 +152,8 @@ else:
 print(f"range: {range_loop[0]} - {range_loop[-1]}")
 
 for j in tqdm(range_loop):
+    EMRI_AET_w_pad = None  # Initialize variable to avoid NameError
     print(j)
-    
     if param.p0[j] < 0:
         param.error[j] = param.p0[j]
     
@@ -191,7 +189,20 @@ for j in tqdm(range_loop):
                 param.error[j] = 3
                 print("ValueError", e)
 
-            # try to void memory accumulation
+        except TimeoutError:
+            print(f"Skipping iteration {j} as it takes > 60 seconds")
+            param.error[j] = -1
+            continue
+        
+        except ZeroDivisionError:
+            print(f"Errore: Divisione per zero con i parametri: {true_params}")
+            param.error[j] = -2
+            continue
+        except ValueError as e:
+            print(f"ValueError on iteration {j}: {e}")
+            print(f"Parameters: {true_params}")
+        
+        if EMRI_AET_w_pad is not None:
             del EMRI_AET_w_pad, SNR2_AET
 
 # # ===================== Save the output ====================

@@ -117,5 +117,5 @@ kwargs = {'M': M,
           'Y_f':       Y_f
                  }
 
-df = pd.DataFrame(kwargs)
-df.to_hdf(f"/work/LISA/piarulm/EMRI_catalogs/New_Catalog/AAK_traj/Model{args.nmodel}/M{args.nmodel}_Tgw{int(args.t_gw)}_input.h5", key = "param", index = False)
+# df = pd.DataFrame(kwargs)
+# df.to_hdf(f"/work/LISA/piarulm/EMRI_catalogs/New_Catalog/AAK_traj/Model{args.nmodel}/M{args.nmodel}_Tgw{int(args.t_gw)}_input.h5", key = "param", index = False)

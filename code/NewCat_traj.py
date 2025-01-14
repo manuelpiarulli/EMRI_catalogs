@@ -1,4 +1,5 @@
 import numpy as np
+from few.trajectory.ode import PN5
 from few.utils.utility import (get_separatrix, )
 #######====================Traj====================
 from few.trajectory.inspiral import EMRIInspiral
@@ -8,15 +9,16 @@ import os
 T=1*365.25*24*60*60
 LISA_yr = 4*T
 
-trajectory_class = 'pn5'
+trajectory_class = PN5
 print("5PN AAK trajectory")
 
 inspiral_kwargs_traj = {
     "DENSE_STEPPING": 0,  # we want a sparsely sampled trajectory
-    "max_init_len": int(1e6)# all of the trajectories will be well under len = 1e6
+    "max_init_len": int(1e6), # all of the trajectories will be well under len = 1e6
+    "integrate_backwards":True
 }
 
-traj_backwards = EMRIInspiral(func = trajectory_class, integrate_backwards = True) 
+traj_backwards = EMRIInspiral(func = trajectory_class) 
 
 def traj_back(nmodel,i, M, mu, a, e_f, x_f, Y_f, Tgw, Phi_phi0, Phi_theta0, Phi_r0, pf_init = 0.30):
     if mu/M > 1e-3: #mass ratio limit
